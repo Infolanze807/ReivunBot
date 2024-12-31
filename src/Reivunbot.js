@@ -155,7 +155,7 @@ const Reivunbot = () => {
           </button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 h-full w-full">
+        {/* <div className="grid gap-4 md:grid-cols-2 h-full w-full">
         <div className="bg-white p-2 rounded-lg shadow">
   <h2 className="mb-4 text-xl font-semibold">Watched Market</h2>
   
@@ -259,6 +259,115 @@ const Reivunbot = () => {
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none  dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[--green-color]"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div> */}
+
+<div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          {/ Watched Market /}
+          <div className="bg-white p-4 rounded-lg shadow overflow-hidden">
+            <h2 className="mb-4 text-xl font-semibold">Watched Market</h2>
+            {Object.entries(symbolsData).length === 0 && !isSocketLoading ? (
+              <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
+                <p>No data available...</p>
+              </div>
+            ) : (
+              <div className="bg-[--bg-color] rounded-lg px-2 overflow-y-auto max-h-[300px]">
+                {Object.entries(symbolsData).map(([symbol, data]) => (
+                  <div key={symbol} className="py-2">
+                    <div className="flex justify-between border-b border-[--green-color] pb-1 text-sm sm:text-sm md:text-base lg:text-lg">
+                      <h3 className="text-[--green-color]">{symbol}</h3>
+                      <h4 className="text-gray-400">{data.timestamp}</h4>
+                    </div>
+                    <div className="overflow-x-auto sm:overflow-x-hidden">
+                      <table className="w-full min-w-[450px] sm:min-w-[100%]">
+                        <thead>
+                          <tr className="text-xs text-[--green-color]">
+                            <th className="px-2 py-1">Open</th>
+                            <th className="px-2 py-1">High</th>
+                            <th className="px-2 py-1">Low</th>
+                            <th className="px-2 py-1">Close</th>
+                            <th className="px-2 py-1">Volume</th>
+                            <th className="px-2 py-1">Hammer</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="text-xs text-center text-gray-400">
+                            <td className="px-2 py-1">{data?.open?.toFixed(2) || "N/A"}</td>
+                            <td className="px-2 py-1">{data?.high?.toFixed(2) || "N/A"}</td>
+                            <td className="px-2 py-1">{data?.low?.toFixed(2) || "N/A"}</td>
+                            <td className="px-2 py-1">{data?.close?.toFixed(2) || "N/A"}</td>
+                            <td className="px-2 py-1">{data?.volume?.toFixed(2) || "N/A"}</td>
+                            <td className="px-2 py-1">{data?.isHammer ? "Yes" : "No"}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/ Configuration /}
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="mb-4 text-xl font-semibold">Configuration For Bot</h2>
+            <div className="space-y-4">
+              {/ Timeframe /}
+              <div>
+                <label className="mb-2 block text-sm">Timeframe</label>
+                <select
+                  name="timeframe"
+                  value={config.timeframe}
+                  onChange={handleConfigChange}
+                  className="w-full border rounded-md p-2"
+                >
+                  <option value="1m">1m</option>
+                  <option value="5m">5m</option>
+                  <option value="15m">15m</option>
+                </select>
+              </div>
+
+
+              {/ Leverage /}
+              <div>
+                <label className="mb-2 block text-sm font-medium">Leverage</label>
+                <input
+                  type="number"
+                  name="leverage"
+                  value={config.leverage}
+                  onChange={handleConfigChange}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+
+              {/ Trade Amount /}
+              <div>
+                <label className="mb-2 block text-sm font-medium">Trade Amount (USDT)</label>
+                <input
+                  type="number"
+                  name="tradeAmount"
+                  value={config.tradeAmount}
+                  onChange={handleConfigChange}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+
+              {/ Demo Mode /}
+              <div className="flex items-center justify-between">
+                <span>Demo Mode</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="demoMode"
+                    checked={config.demoMode}
+                    onChange={handleConfigChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[--green-color]"></div>
                 </label>
               </div>
             </div>
