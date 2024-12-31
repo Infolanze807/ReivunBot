@@ -122,7 +122,7 @@ const Reivunbot = () => {
       <div className="mx-auto max-w-7xl space-y-4">
         <header className="flex items-center justify-between">
           <div className="lg:col-span-4 col-span-6">
-            <a href="/" className="flex items-center grid-cols-3 space-x-3">
+            <a href="https://reivun.cloud/" className="flex items-center grid-cols-3 space-x-3">
               <img
                 src={logo}
                 className="md:w-16 w-12 rounded-full"
