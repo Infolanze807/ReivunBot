@@ -39,7 +39,6 @@ const Reivunbot = () => {
       [name]: value
     }));
   };
-
   const handleStartStopBot = async () => {
     if (isRunning) {
       setIsRunning(false);
@@ -58,6 +57,36 @@ const Reivunbot = () => {
           setSymbolsData(response.data);
           console.log(response.data, "get");
           setIsRunning(true);
+  
+          // Establish the WebSocket connection here
+          const socket = io('https://reivun-gkdi.vercel.app');
+  
+          socket.on('connect', () => {
+            console.log('Connected to server');
+          });
+  
+          socket.on('symbolsData', (data) => {
+            setIsSocketLoading(true);
+            console.log("Socket.IO message received:", data);
+            setSymbolsData((prevData) => ({
+              ...prevData,
+              ...data,
+            }));
+            setIsSocketLoading(false);
+          });
+  
+          socket.on('error', (error) => {
+            setError("Error with Socket.IO connection");
+            console.error("Socket.IO error:", error);
+          });
+  
+          socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+          });
+  
+          // Store the socket in state for cleanup
+          setSocketInstance(socket);
+  
         } catch (error) {
           setError("Error fetching data from API");
           console.error("Error fetching data from API", error);
@@ -69,53 +98,93 @@ const Reivunbot = () => {
       }
     }
   };
-
+  
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("https://reivun-gkdi.vercel.app/symbols");
-        setSymbolsData(response.data);
-      } catch (error) {
-        setError("Error fetching data from API");
-        console.error("Error fetching data from API", error);
-      } finally {
-        setLoading(false);
+    // Cleanup socket connection when the component unmounts or bot stops
+    return () => {
+      if (socketInstance) {
+        console.log('Closing Socket.IO connection');
+        socketInstance.disconnect();
       }
     };
+  }, [socketInstance]);
+  
+  // const handleStartStopBot = async () => {
+  //   if (isRunning) {
+  //     setIsRunning(false);
+  //     console.log("Bot stopped");
+  //   } else {
+  //     if (config.demoMode) {
+  //       setLoading(true);
+  //       try {
+  //         const response = await axios.get("https://reivun-gkdi.vercel.app/symbols", {
+  //           headers: {
+  //             "API-Key": credentials.apiKey,
+  //             "Secret-Key": credentials.secretKey,
+  //             Passphrase: credentials.passphrase,
+  //           },
+  //         });
+  //         setSymbolsData(response.data);
+  //         console.log(response.data, "get");
+  //         setIsRunning(true);
+  //       } catch (error) {
+  //         setError("Error fetching data from API");
+  //         console.error("Error fetching data from API", error);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     } else {
+  //       alert("Bot cannot run when demo mode is off!");
+  //     }
+  //   }
+  // };
 
-    fetchData();
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await axios.get("https://reivun-gkdi.vercel.app/symbols");
+  //       setSymbolsData(response.data);
+  //     } catch (error) {
+  //       setError("Error fetching data from API");
+  //       console.error("Error fetching data from API", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    const socket = io('https://reivun-gkdi.vercel.app');
+  //   fetchData();
 
-    socket.on('connect', () => {
-      console.log('Connected to server');
-    });
+  //   const socket = io('https://reivun-gkdi.vercel.app');
 
-    socket.on('symbolsData', (data) => {
-      setIsSocketLoading(true);
-      console.log("Socket.IO message received:", data);
-      setSymbolsData((prevData) => ({
-        ...prevData,
-        ...data,
-      }));
-      setIsSocketLoading(false);
-    });
+  //   socket.on('connect', () => {
+  //     console.log('Connected to server');
+  //   });
 
-    socket.on('error', (error) => {
-      setError("Error with Socket.IO connection");
-      console.error("Socket.IO error:", error);
-    });
+  //   socket.on('symbolsData', (data) => {
+  //     setIsSocketLoading(true);
+  //     console.log("Socket.IO message received:", data);
+  //     setSymbolsData((prevData) => ({
+  //       ...prevData,
+  //       ...data,
+  //     }));
+  //     setIsSocketLoading(false);
+  //   });
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from server');
-    });
+  //   socket.on('error', (error) => {
+  //     setError("Error with Socket.IO connection");
+  //     console.error("Socket.IO error:", error);
+  //   });
 
-    return () => {
-      console.log('Closing Socket.IO connection');
-      socket.disconnect();
-    };
-  }, []);
+  //   socket.on('disconnect', () => {
+  //     console.log('Disconnected from server');
+  //   });
+
+  //   return () => {
+  //     console.log('Closing Socket.IO connection');
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   return (
     <div className="min-h-screen bg-[--bg-color] p-4">
