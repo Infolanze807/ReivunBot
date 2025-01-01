@@ -12,6 +12,7 @@ const Reivunbot = () => {
   const [loading, setLoading] = useState(true);
   const [isSocketLoading, setIsSocketLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [socketInstance, setSocketInstance] = useState(null);
   const [credentials, setCredentials] = useState({
     apiKey: "",
     secretKey: "",
