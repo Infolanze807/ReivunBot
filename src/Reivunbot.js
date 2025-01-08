@@ -535,7 +535,7 @@ const Reivunbot = () => {
   <h2 className="mb-4 text-xl font-semibold">Watched Market</h2>
   
   {/* {Object.entries(symbolsData).length === 0 && !isSocketLoading ? ( */}
-  {Object.entries(symbolsData).length === 0 && !isSocketLoading && !loading ? (
+  {Object.entries(symbolsData).length === 0 && isSocketLoading && loading ? (
     <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
     <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
     </div>
