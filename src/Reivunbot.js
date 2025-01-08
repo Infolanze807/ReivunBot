@@ -5,8 +5,31 @@ import { FiActivity } from "react-icons/fi";
 import logo from "./Images/gno-wallet.png";
 import { BsStars } from "react-icons/bs";
 import io from 'socket.io-client';
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 
 const Reivunbot = () => {
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [isRunning, setIsRunning] = useState(false);
   const [symbolsData, setSymbolsData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -306,6 +329,48 @@ const Reivunbot = () => {
       console.error("Error saving credentials:", error);
     }
   };
+
+  const fetchBTCPrices = async () => {
+    try {
+      const response = await axios.get(
+        "https://api.binance.com/api/v3/klines",
+        {
+          params: {
+            symbol: "BTCUSDT",
+            interval: "1m", // 1-minute interval
+            limit: 50, // Last 50 price points
+          },
+        }
+      );
+
+      const prices = response.data.map((point) => ({
+        time: new Date(point[0]).toLocaleTimeString(),
+        price: parseFloat(point[4]), // Closing price
+      }));
+
+      setChartData({
+        labels: prices.map((p) => p.time),
+        datasets: [
+          {
+            label: "BTC/USDT Price",
+            data: prices.map((p) => p.price),
+            borderColor: "rgba(75, 192, 192, 1)",
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderWidth: 2,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error fetching BTC prices:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBTCPrices();
+
+    const interval = setInterval(fetchBTCPrices, 60000); // Refresh every minute
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const savedCredentials = JSON.parse(localStorage.getItem("apiCredentials"));
@@ -728,9 +793,7 @@ const Reivunbot = () => {
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="mb-4 text-xl font-semibold">BTC/USDT Price Chart</h2>
           <div className="h-[400px] rounded-lg bg-zinc-800 flex items-center justify-center">
-            <span className="text-[--green-color]">
-              Chart implementation coming soon...
-            </span>
+          <Line data={chartData} />
           </div>
         </div>
 
