@@ -498,7 +498,8 @@ const Reivunbot = () => {
           </div>
           <button
             onClick={handleStartStopBot}
-            className="bg-[--green-color] hover:bg-[--main-color] text-white font-bold p-2 rounded"
+            disabled={isRunning}
+            className="bg-[--green-color] hover:bg-[--main-color] text-white font-bold p-2 rounded "
           >
             {isRunning ? "Bot Are Running " : "Start the Bot"}
           </button>
