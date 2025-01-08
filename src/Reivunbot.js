@@ -474,7 +474,7 @@ const Reivunbot = () => {
   <h2 className="mb-4 text-xl font-semibold">Watched Market</h2>
   
   {/* {Object.entries(symbolsData).length === 0 && !isSocketLoading ? ( */}
-  {Object.entries(symbolsData).length === 0 && isSocketLoading && loading ? (
+  {Object.entries(symbolsData).length === 0 && !isSocketLoading && !loading ? (
     <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
     <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
     </div>
@@ -501,12 +501,12 @@ const Reivunbot = () => {
             </thead>
             <tbody>
               <tr className="text-xs text-center text-gray-400">
-                <td className="">{data?.open?.toFixed(2) || "N/A"}</td>
-                <td className="">{data?.high?.toFixed(2) || "N/A"}</td>
-                <td className="">{data?.low?.toFixed(2) || "N/A"}</td>
-                <td className="">{data?.close?.toFixed(2) || "N/A"}</td>
+                <td className="">{data?.open?.toFixed(2)}</td>
+                <td className="">{data?.high?.toFixed(2)}</td>
+                <td className="">{data?.low?.toFixed(2)}</td>
+                <td className="">{data?.close?.toFixed(2)}</td>
                 <td className="">
-                  {data?.volume?.toFixed(2) || "N/A"}
+                  {data?.volume?.toFixed(2)}
                 </td>
                 <td className="">{data?.isHammer ? "Yes" : "No"}</td>
               </tr>
