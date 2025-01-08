@@ -108,6 +108,7 @@ const Reivunbot = () => {
       if (config.demoMode) {
         setLoading(true);
         try {
+          if (credentials.apiKey && credentials.secretKey && credentials.passphrase) {
           const response = await axios.get("https://reivun-gkdi.vercel.app/symbols", {
             params: {
               apiKey: credentials.apiKey,
@@ -147,7 +148,7 @@ const Reivunbot = () => {
   
           // Store the socket in state for cleanup
           setSocketInstance(socket);
-  
+        }
         } catch (error) {
           setError("Error fetching data from API");
           console.error("Error fetching data from API", error);
