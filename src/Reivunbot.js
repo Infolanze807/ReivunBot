@@ -154,6 +154,25 @@ const Reivunbot = () => {
       alert("Bot cannot run when demo mode is off!");
     }
   };
+
+  const saveCredentials = async () => {
+    try {
+      // Save credentials to local storage
+      localStorage.setItem("apiCredentials", JSON.stringify(credentials));
+      
+      // Call the bot start function after credentials are saved
+      await starbotbyuser();
+    } catch (error) {
+      console.error("Error saving credentials:", error);
+    }
+  };
+
+  useEffect(() => {
+    const savedCredentials = JSON.parse(localStorage.getItem("apiCredentials"));
+    if (savedCredentials) {
+      setCredentials(savedCredentials);
+    }
+  }, []);
   
   useEffect(() => {
     // Cleanup socket connection when the component unmounts or bot stops
@@ -544,7 +563,7 @@ const Reivunbot = () => {
               />
             </div>
           </div>
-          <button className="mt-4 w-full bg-[--green-color] hover:bg-[--main-color] text-white font-bold py-2 px-4 rounded" onClick={starbotbyuser}>
+          <button className="mt-4 w-full bg-[--green-color] hover:bg-[--main-color] text-white font-bold py-2 px-4 rounded" onClick={saveCredentials}>
             Save Credentials
           </button>
         </div>
