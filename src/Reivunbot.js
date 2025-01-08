@@ -102,64 +102,83 @@ const Reivunbot = () => {
 
   const starbotbyuser = async () => {
     if (isRunning) {
+      // Stop the bot and clean up resources
       setIsRunning(false);
-      console.log("Bot stopped");
-    } else {
-      if (config.demoMode) {
-        setLoading(true);
-        try {
-          if (credentials.apiKey && credentials.secretKey && credentials.passphrase) {
-          const response = await axios.get("https://reivun-gkdi.vercel.app/symbols", {
-            params: {
-              apiKey: credentials.apiKey,
-              secretKey: credentials.secretKey,
-              passphrase: credentials.passphrase,
-            }
-          });
-          setSymbolsData(response.data);
-          console.log(response.data, "get");
-          setIsRunning(true);
-  
-          // Establish the WebSocket connection here
-          const socket = io('https://reivun-gkdi.vercel.app');
-  
-          socket.on('connect', () => {
-            console.log('Connected to server');
-          });
-  
-          socket.on('symbolsData', (data) => {
-            setIsSocketLoading(true);
-            console.log("Socket.IO message received:", data);
-            setSymbolsData((prevData) => ({
-              ...prevData,
-              ...data,
-            }));
-            setIsSocketLoading(false);
-          });
-  
-          socket.on('error', (error) => {
-            setError("Error with Socket.IO connection");
-            console.error("Socket.IO error:", error);
-          });
-  
-          socket.on('disconnect', () => {
-            console.log('Disconnected from server');
-          });
-  
-          // Store the socket in state for cleanup
-          setSocketInstance(socket);
-        }
-        } catch (error) {
-          setError("Error fetching data from API");
-          console.error("Error fetching data from API", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        alert("Bot cannot run when demo mode is off!");
+      if (socketInstance) {
+        socketInstance.disconnect();
+        setSocketInstance(null);
       }
+      console.log("Bot stopped");
+      return;
+    }
+  
+    // Ensure demo mode is enabled
+    if (!config.demoMode) {
+      alert("Bot cannot run when demo mode is off!");
+      return;
+    }
+  
+    if (!credentials.apiKey || !credentials.secretKey || !credentials.passphrase) {
+      setError("Missing API credentials");
+      console.error("Error: Missing API credentials");
+      return;
+    }
+  
+    setLoading(true); // Start loading spinner
+  
+    try {
+      // Fetch initial symbols data from API
+      const response = await axios.get("https://reivun-gkdi.vercel.app/symbols", {
+        params: {
+          apiKey: credentials.apiKey,
+          secretKey: credentials.secretKey,
+          passphrase: credentials.passphrase,
+        },
+      });
+  
+      // Update symbols data state
+      setSymbolsData(response.data);
+      console.log(response.data, "get");
+  
+      // Set bot as running
+      setIsRunning(true);
+  
+      // Establish the WebSocket connection
+      const socket = io("https://reivun-gkdi.vercel.app");
+  
+      socket.on("connect", () => {
+        console.log("Connected to server");
+      });
+  
+      socket.on("symbolsData", (data) => {
+        setIsSocketLoading(true);
+        console.log("Socket.IO message received:", data);
+        setSymbolsData((prevData) => ({
+          ...prevData,
+          ...data,
+        }));
+        setIsSocketLoading(false);
+      });
+  
+      socket.on("error", (error) => {
+        setError("Error with Socket.IO connection");
+        console.error("Socket.IO error:", error);
+      });
+  
+      socket.on("disconnect", () => {
+        console.log("Disconnected from server");
+      });
+  
+      // Store the socket instance for cleanup
+      setSocketInstance(socket);
+    } catch (error) {
+      setError("Error fetching data from API");
+      console.error("Error fetching data from API:", error);
+    } finally {
+      setLoading(false); // Stop loading spinner
     }
   };
+  
 
   // const starbotbyuser = async () => {
   //   if (isRunning) {
