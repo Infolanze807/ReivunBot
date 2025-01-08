@@ -559,12 +559,6 @@ const Reivunbot = () => {
     <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
     </div> */}
 
-
-To manage the spinner effectively, you need to clearly handle the different states of your loading process (loading, isSocketLoading, and symbolsData) and ensure the spinner is displayed only when necessary. Here's an optimized approach:
-
-Updated Code for Spinner Management:
-jsx
-Copy code
 {loading || isSocketLoading || Object.entries(symbolsData).length === 0 ? (
   <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
     {loading && (
