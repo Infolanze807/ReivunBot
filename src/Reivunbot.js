@@ -104,7 +104,7 @@ const Reivunbot = () => {
     if (credentials.apiKey && credentials.secretKey && credentials.passphrase) {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/symbols", {
+        const response = await axios.get("https://reivun-gkdi.vercel.app/symbols", {
           params: {
             apiKey: credentials.apiKey,
             secretKey: credentials.secretKey,
