@@ -554,10 +554,29 @@ const Reivunbot = () => {
   <h2 className="mb-4 text-xl font-semibold">Watched Market</h2>
   
   {/* {Object.entries(symbolsData).length === 0 && !isSocketLoading ? ( */}
-  {Object.entries(symbolsData).length === 0 && isSocketLoading && loading ? (
+  {/* {Object.entries(symbolsData).length === 0 && isSocketLoading && loading ? (
     <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
     <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
-    </div>
+    </div> */}
+
+
+To manage the spinner effectively, you need to clearly handle the different states of your loading process (loading, isSocketLoading, and symbolsData) and ensure the spinner is displayed only when necessary. Here's an optimized approach:
+
+Updated Code for Spinner Management:
+jsx
+Copy code
+{loading || isSocketLoading || Object.entries(symbolsData).length === 0 ? (
+  <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
+    {loading && (
+      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
+    )}
+    {isSocketLoading && !loading && (
+      <div>Loading data from WebSocket...</div> 
+    )}
+    {Object.entries(symbolsData).length === 0 && !loading && !isSocketLoading && (
+      <div>No data available</div>
+    )}
+  </div>
   ) : (
     <div className="bg-[--bg-color] rounded-lg px-2 overflow-y-scroll max-h-[300px]">
       {Object.entries(symbolsData).map(([symbol, data]) => (
