@@ -718,7 +718,7 @@ const Reivunbot = () => {
             </div>
           </div>
           <button className="mt-4 w-full bg-[--green-color] hover:bg-[--main-color] text-white font-bold py-2 px-4 rounded" onClick={saveCredentials}>
-          {isRunning ? "Save credentials" : "Save credentials1" }
+         Save credentials
           </button>
         </div>
 
