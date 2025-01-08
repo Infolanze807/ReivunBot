@@ -415,7 +415,7 @@ const Reivunbot = () => {
   
   {Object.entries(symbolsData).length === 0 && !isSocketLoading ? (
     <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
-    <p>No data available...</p>
+    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
     </div>
   ) : (
     <div className="bg-[--bg-color] rounded-lg px-2 overflow-y-scroll max-h-[300px]">
