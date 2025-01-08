@@ -560,17 +560,20 @@ const Reivunbot = () => {
     </div> */}
 
 {loading || isSocketLoading || Object.entries(symbolsData).length === 0 ? (
-  <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
-    {loading && (
-      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
-    )}
-    {isSocketLoading && !loading && (
-      <div>Loading data from WebSocket...</div> 
-    )}
-    {Object.entries(symbolsData).length === 0 && !loading && !isSocketLoading && (
-      <div>No data available</div>
-    )}
-  </div>
+    <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
+      {/* Loading spinner during API request */}
+      {loading && (
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
+      )}
+      {/* Loading message during WebSocket request */}
+      {isSocketLoading && !loading && (
+        <div>Loading data from WebSocket...</div>
+      )}
+      {/* No data message */}
+      {Object.entries(symbolsData).length === 0 && !loading && !isSocketLoading && (
+        <div>No data available</div>
+      )}
+    </div>
   ) : (
     <div className="bg-[--bg-color] rounded-lg px-2 overflow-y-scroll max-h-[300px]">
       {Object.entries(symbolsData).map(([symbol, data]) => (
