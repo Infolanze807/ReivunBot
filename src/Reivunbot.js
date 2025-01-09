@@ -32,6 +32,11 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [isSocketLoading, setIsSocketLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [state, setState] = useState({
+    loading: false,
+    isSocketLoading: false,
+    error: null,
+  });
   const [socketInstance, setSocketInstance] = useState(null);
   const [credentials, setCredentials] = useState({
     apiKey: "",
@@ -86,8 +91,7 @@ const App = () => {
       return;
     }
 
-    setLoading(true);
-    setIsSocketLoading(true);
+    setState({ loading: true, isSocketLoading: true, error: null });
 
     try {
       const response = await axios.get("https://reivun-gkdi.vercel.app/symbols", {
@@ -107,33 +111,30 @@ const App = () => {
 
       socket.on("connect", () => {
         console.log("Connected to server");
-        setIsSocketLoading(false);
+        setState({ ...state, isSocketLoading: false });
       });
 
       socket.on("symbolsData", (data) => {
         console.log("Socket.IO message received:", data);
-        setSymbolsData((prevData) => ({
-          ...prevData,
-          ...data,
-        }));
+        setSymbolsData((prevData) => ({ ...prevData, ...data }));
       });
 
       socket.on("error", (error) => {
-        setError("Error with Socket.IO connection");
+        setState({ ...state, error: "Error with Socket.IO connection" });
         console.error("Socket.IO error:", error);
       });
 
       socket.on("disconnect", () => {
         console.log("Disconnected from server");
-        setIsSocketLoading(true);
+        setState({ ...state, isSocketLoading: true });
       });
 
       setSocketInstance(socket);
     } catch (error) {
-      setError("Error fetching data from API");
+      setState({ loading: false, error: "Error fetching data from API" });
       console.error("Error fetching data from API:", error);
     } finally {
-      setLoading(false);
+      setState((prevState) => ({ ...prevState, loading: false }));
     }
   };
 
@@ -197,8 +198,8 @@ const App = () => {
   useEffect(() => {
     return () => {
       if (socketInstance) {
-        console.log('Closing Socket.IO connection');
         socketInstance.disconnect();
+        console.log("Socket disconnected");
       }
     };
   }, [socketInstance]);
@@ -242,7 +243,7 @@ const App = () => {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 h-full w-full">
-          <div className="bg-white p-2 rounded-lg shadow overflow-hidden">
+          {/* <div className="bg-white p-2 rounded-lg shadow overflow-hidden">
             <h2 className="mb-4 text-xl font-semibold">Watched Market</h2>
             {loading || isSocketLoading ? (
               <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
@@ -288,7 +289,58 @@ const App = () => {
                 ))}
               </div>
             )}
-          </div>
+          </div> */}
+          <div className="bg-white p-2 rounded-lg shadow overflow-hidden">
+      <h2 className="mb-4 text-xl font-semibold">Watched Market</h2>
+      {state.loading || state.isSocketLoading ? (
+        <div className="flex justify-center items-center h-[250px] text-xl text-[--green-color] font-bold">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[--green-color] border-solid"></div>
+        </div>
+      ) : state.error ? (
+        <div className="flex justify-center items-center h-[250px] text-xl text-red-500 font-bold">
+          {state.error}
+        </div>
+      ) : Object.entries(symbolsData).length === 0 ? (
+        <div className="flex justify-center items-center h-[250px] text-xl text-gray-500 font-bold">
+          No data available
+        </div>
+      ) : (
+        <div className="bg-[--bg-color] rounded-lg px-2 overflow-y-scroll max-h-[300px]">
+          {Object.entries(symbolsData).map(([symbol, data]) => (
+            <div key={symbol} className="py-2">
+              <div className="flex justify-between border-b border-[--green-color] pb-1 text-sm">
+                <h3 className="text-[--green-color]">{symbol}</h3>
+                <h4 className="text-gray-400">{data.timestamp}</h4>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-xs text-[--green-color] font-thin">
+                      <th className="px-2">Open</th>
+                      <th className="px-2">High</th>
+                      <th className="px-2">Low</th>
+                      <th className="px-2">Close</th>
+                      <th className="px-2">Volume</th>
+                      <th className="px-2">Hammer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="text-xs text-center text-gray-400">
+                      <td>{data?.open?.toFixed(2)}</td>
+                      <td>{data?.high?.toFixed(2)}</td>
+                      <td>{data?.low?.toFixed(2)}</td>
+                      <td>{data?.close?.toFixed(2)}</td>
+                      <td>{data?.volume?.toFixed(2)}</td>
+                      <td>{data?.isHammer ? "Yes" : "No"}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
 
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="mb-4 text-xl font-semibold">
