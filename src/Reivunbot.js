@@ -4,6 +4,7 @@ import { FiActivity } from "react-icons/fi";
 import { BsStars } from "react-icons/bs";
 import io from 'socket.io-client';
 import { Line } from "react-chartjs-2";
+import logo from "./Images/gno-wallet.png";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -211,7 +212,7 @@ const App = () => {
           <div className="lg:col-span-4 col-span-6">
             <a href="https://reivun.cloud/" className="flex items-center grid-cols-3 space-x-3">
               <img
-                src="/placeholder.svg?height=64&width=64"
+               src={logo}
                 className="md:w-16 w-12 rounded-full"
                 alt="Reivun Logo"
               />
